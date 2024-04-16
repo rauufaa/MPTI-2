@@ -108,7 +108,9 @@ const send_email_forgot_pass = async(request) => {
     // }
 
     //for hosting
+    
     await sendEmailUsingHosting(codeRequest.email, code)
+    
 
     query = "UPDATE users SET token=? WHERE email=?";
     params = [code, codeRequest.email];

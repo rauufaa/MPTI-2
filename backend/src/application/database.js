@@ -1,5 +1,6 @@
 import mysql from "mysql2/promise"
 import dotenv from "dotenv"
+import { ResponseError } from "../error/response-error.js";
 
 dotenv.config({
     path:'./.env'
@@ -37,15 +38,19 @@ const pool = mysql.createPool({
 
 const databaseQuery = async (query, params) => {
     // For pool initialization, see above
-    const conn = await pool.getConnection();
+    try {
+        const conn = await pool.getConnection();
+         // Do something with the connection
+        const [results, fields] = await conn.execute(query, params);
 
-    // Do something with the connection
-    const [results, fields] = await conn.execute(query, params);
-
-    // Don't forget to release the connection when finished!
-    conn.release();
-
-    return [results, fields];
+        // Don't forget to release the connection when finished!
+        conn.release();
+        return [results, fields];
+    } catch (error) {
+        throw new ResponseError(500, "Server Error");  
+        // console.log("Smothing wrong") 
+    }
+    
 }
 
 

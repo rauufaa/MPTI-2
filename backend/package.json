@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "jest -i"
+    "test": "jest -i",
+    "start": "nodemon src/index"
   },
   "jest": {
     "transform": {
@@ -26,6 +27,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.9.2",
     "nodemailer": "^6.9.13",
+    "nodemon": "^3.1.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
