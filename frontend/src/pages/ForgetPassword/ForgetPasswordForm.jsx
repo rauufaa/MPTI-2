@@ -9,7 +9,7 @@ import { useSendEmail } from '../../hooks/useSendEmail';
 function ForgetPasswordForm() {
     const [email, setEmail] = useState("");
 
-    const { sendEmail, isErrorSendEmail, isLoadingSendEmail } = useSendEmail()
+    const { sendEmail, isErrorSendEmail, isLoadingSendEmail, messageSendEmail } = useSendEmail()
 
 
     const handleEmailChange = (input) => {
@@ -38,7 +38,7 @@ function ForgetPasswordForm() {
             <Form className="space-y-4 md:space-y-6" onSubmit={handleForgetPassword}>
                 {
                     isErrorSendEmail && (
-                        <AlertComponent duration={5000} message={"Email salah"} />
+                        <AlertComponent duration={5000} message={messageSendEmail} />
                     )
                 }
                 <div>

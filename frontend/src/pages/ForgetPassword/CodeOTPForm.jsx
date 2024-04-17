@@ -5,7 +5,7 @@ import { useState } from "react"
 
 function CodeOTPForm() {
     const [codeOtp, setCodeOtp] = useState("");
-    const { sendCode, isErrorSendCode, isLoadingSendCode } = useSendCode()
+    const { sendCode, isErrorSendCode, isLoadingSendCode, messageSendCode } = useSendCode()
     const handleCodeOtpChange = (input) => {
         input.target.value = input.target.value.replace(/[^0-9]/g, '');
         setCodeOtp(input.target.value)
@@ -25,7 +25,7 @@ function CodeOTPForm() {
             <Form className="space-y-4 md:space-y-6" onSubmit={handleForgetPassword}>
                 {
                     isErrorSendCode && (
-                        <AlertComponent duration={5000} message={"Kode invalid"} />
+                        <AlertComponent duration={5000} message={messageSendCode} />
                     )
                 }
                 <div>
@@ -38,7 +38,7 @@ function CodeOTPForm() {
                     <span className="">@gmail.com</span>
                 </label> */}
                     <label className="input input-bordered flex items-center gap-2">
-                        <input type="text" placeholder="Type here" className="grow text-center" max={6} onInput={handleCodeOtpChange} />
+                        <input type="text" placeholder="Type here" className="grow text-center" max={6} min={6} onInput={handleCodeOtpChange} required/>
                     </label>
                 </div>
                 {/* <div className="pb-2">

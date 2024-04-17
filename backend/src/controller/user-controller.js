@@ -23,6 +23,18 @@ const login = async (req, res, next) => {
     }
 }
 
+const logout = async (req, res, next) => {
+    try {
+        const result = await userService.logout(req);
+        res.status(200).json({
+            data: result,
+            ok: true
+        });
+    } catch (error) {
+        next(error);
+    }
+} 
+
 const send_email = async (req, res, next) => {
     try {
         const result = await userService.send_email_forgot_pass(req.body);
@@ -61,6 +73,7 @@ const send_repass = async (req, res, next) => {
 
 export default{
     login,
+    logout,
     send_email,
     send_code,
     send_repass

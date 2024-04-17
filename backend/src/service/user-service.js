@@ -1,6 +1,6 @@
 import { databaseQuery } from "../application/database.js"
 import { ResponseError } from "../error/response-error.js"
-import { codeOtpUserValidation, emailUserValidation, loginUserValidation, repassUserValidation } from "../validation/user-validation.js"
+import { codeOtpUserValidation, emailUserValidation, loginUserValidation, logoutUserValidation, repassUserValidation } from "../validation/user-validation.js"
 import { validate_object } from "../validation/validation-util.js"
 import bcrypt from "bcrypt"
 import {v4 as uuid} from "uuid";
@@ -33,29 +33,59 @@ const login = async (request) => {
     const loginRequest = validate_object(loginUserValidation, request)
     console.log(request)
 
-    const query = "SELECT username, password FROM users WHERE username = ?"
-    const params = [loginRequest.username]
-    const [resultUser, field] = await databaseQuery(query, params)
+    let query = "SELECT username, nama, password FROM users WHERE username = ?"
+    let params = [loginRequest.username]
+    let [resultUser, field] = await databaseQuery(query, params)
+    // console.log(resultUser.at(0).password)
     if(resultUser.length == 0){
         throw new ResponseError(400, "User not found")
     }
+    const nama = resultUser.at(0).nama
+    const username = resultUser.at(0).username
+    console.log("belum error")
 
-    const isPasswordValid = await bcrypt.compare(loginRequest.password, resultUser.password);
+    const isPasswordValid = await bcrypt.compare(loginRequest.password, resultUser.at(0).password);
+    console.log("error")
     if (!isPasswordValid) {
         throw new ResponseError(401, "Username or password wrong");
     }
 
     const token = uuid().toString()
-    query = "UPDATE `token` FROM 'users' WHERE 'username' = ?"
-    params = [loginRequest.username]
+    query = "UPDATE users SET token=? WHERE username=?"
+    console.log(token)
+    params = [token, loginRequest.username]
     resultUser = await databaseQuery(query, params)
+    console.log("ini error")
+    if (resultUser.affectedRows==0){
+        throw new ResponseError(400, "Error")
+    }
+    console.log("ini error")
+    
+
+    return {token, nama, username}
+}  
+
+const logout = async (request) => {
+    const userRequest = validate_object(logoutUserValidation, request.user);
+
+    let query = "SELECT * FROM users WHERE username=? AND token=?";
+    let params = [userRequest.username, userRequest.token];
+    let [resultUser, field] = await databaseQuery(query, params);
+
+    if(resultUser.length == 0){
+        throw new ResponseError(400, "User not found")
+    }
+
+    query = "UPDATE users SET token=NULL WHERE username=?";
+    params = [userRequest.username];
+    [resultUser, field] = await databaseQuery(query, params);
 
     if (resultUser.affectedRows==0){
         throw new ResponseError(400, "Error")
     }
 
-    return token
-}  
+    return "Logout Success"
+}
 
 const send_email_forgot_pass = async(request) => {
     const codeRequest = validate_object(emailUserValidation, request)
@@ -153,7 +183,7 @@ async function sendEmailUsingHosting(email, codeOtp){
     var mailOptions = {
         from: process.env.MAIL_ADMIN,
         to: email,
-        subject: 'Sending Email using Node.js',
+        subject: 'Kode Verifikasi Ubah Password',
         text: codeOtp
     };
       
@@ -172,8 +202,9 @@ const send_repass_forgot_pass = async (request) => {
     if(repassRequest.password!==repassRequest.repassword){
         throw new ResponseError(400, "Request error");
     }
+    console.log(repassRequest)
     let query = "SELECT * FROM users WHERE email=? and token=?";
-    let params = [repassRequest.code, repassRequest.email];
+    let params = [repassRequest.email, repassRequest.code];
     let [resultUser, field] = await databaseQuery(query, params);
 
     if(resultUser.length == 0){
@@ -181,7 +212,7 @@ const send_repass_forgot_pass = async (request) => {
     }
 
     const password = await bcrypt.hash(repassRequest.password, 10)
-
+    console.log(password)
     query = "UPDATE users SET password=?, token=NULL WHERE email=? AND token=?";
     params = [password, repassRequest.email, repassRequest.code];
     [resultUser, field] = await databaseQuery(query, params);
@@ -209,6 +240,7 @@ function generateOTP() {
 
 export default {
     login,
+    logout,
     send_email_forgot_pass,
     send_code_forgot_pass,
     send_repass_forgot_pass

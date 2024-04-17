@@ -53,6 +53,23 @@ const databaseQuery = async (query, params) => {
     
 }
 
+const databaseQueryFirst = async(query, params) => {
+    // For pool initialization, see above
+    try {
+        const conn = await pool.getConnection();
+         // Do something with the connection
+        const [results, fields] = await conn
+
+        // Don't forget to release the connection when finished!
+        conn.release();
+        return [results, fields];
+    } catch (error) {
+        throw new ResponseError(500, "Server Error");  
+        // console.log("Smothing wrong") 
+    }
+    
+}
+
 
 export {
     databaseQuery

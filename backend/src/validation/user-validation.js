@@ -22,9 +22,15 @@ const repassUserValidation = Joi.object({
     repassword: Joi.string().min(6).max(100).required(),
 })
 
+const logoutUserValidation = Joi.object({
+    username: Joi.string().max(100).required(),
+    token: Joi.string().max(100).required(),
+})
+
 export {
     loginUserValidation,
     emailUserValidation,
     codeOtpUserValidation,
-    repassUserValidation
+    repassUserValidation,
+    logoutUserValidation
 }

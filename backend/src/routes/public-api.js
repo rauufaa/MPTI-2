@@ -7,6 +7,7 @@ const publicRouter = new express.Router()
 
 publicRouter.post("/login", userController.login)
 
+
 publicRouter.get("/user", (req, res)=>{
     res.json({
         data: "Halo"

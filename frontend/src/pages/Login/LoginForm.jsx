@@ -1,5 +1,5 @@
 
-import { Form, Link, redirect } from 'react-router-dom'
+import { Form, Link, redirect, useNavigate } from 'react-router-dom'
 import LoginButton from './LoginButton'
 import { useEffect, useState } from 'react'
 import { useLogin } from '../../hooks/useLogin.jsx';
@@ -12,10 +12,11 @@ function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showAlert, setShowAlert] = useState(false);
+    const navigate = useNavigate();
 
     // const [loading, setLoading] = useState(false);
     // const [error, setError] = useState(false);
-    const { login, isLoading, isError } = useLogin();
+    const { login, isLoading, isError, loginMessages } = useLogin();
 
     const handleUsernameChange = (input) => {
         input.target.value = input.target.value.replace(/[^a-z0-9]/g, '');
@@ -34,23 +35,46 @@ function LoginForm() {
     //         showAlert?"":setShowAlert(true)
     //     }
     // }, [isError])
+    // useEffect(()=>{
+    //     return navigate("/dashboard")
+    // }, [isError==false])
 
     const handleLogin = async (event) => {
         event.preventDefault();
         // setShowAlert(false)
-        if (username !== "" && password !== "") await login(username, password);
+        if (username !== "" && password !== ""){
+            // try {
+            //     const fet = await login(username, password);
+            //     if(fet){
+            //         console.log("error")
+            //         return navigate("/dashboard")
+            //     }
+            // } catch (error) {
+                
+            // }
+            const resukt = await login(username, password);
+            
+            console.log(resukt)
+            
+            if(resukt){
+                return navigate("/dashboard")
+            }
+            
+        } 
+
+        
 
         // const { data, error, isloading } = useLogin({ username, password })
         // setLoading(isloading);
         // setError(error);
-        // if (!error) redirect("/dashboard");
+        
     }
 
     return (
         <Form className="space-y-4 md:space-y-6" onSubmit={handleLogin}>
             {
                 isError && (
-                    <AlertComponent duration={5000} message={"Login invalid"} />
+                    <AlertComponent duration={5000} message={loginMessages} />
                 )
             }
             <div>

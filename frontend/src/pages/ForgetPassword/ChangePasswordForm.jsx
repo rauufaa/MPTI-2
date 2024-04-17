@@ -1,4 +1,4 @@
-import { Form, redirect } from "react-router-dom"
+import { Form, redirect, useNavigate } from "react-router-dom"
 import SubmitButton from "./SubmitButton"
 import { useSendRepass } from "../../hooks/useSendRepass"
 import { useEffect, useState } from "react"
@@ -11,7 +11,8 @@ function ChangePasswordForm() {
     const [messageAlert, setMessageAlert] = useState("")
     const [password, setPassword] = useState("")
     const [repassword, setRepassword] = useState("")
-    const { sendRepass, isErrorSendRepass, isLoadingSendRepass } = useSendRepass()
+    const { sendRepass, isErrorSendRepass, isLoadingSendRepass, messageSendRepass } = useSendRepass()
+    const navigate = useNavigate()
     const handleForgetPassword = async (event) => {
         event.preventDefault()
 
@@ -28,7 +29,8 @@ function ChangePasswordForm() {
             return 
         }
 
-        if ((password.length === repassword.length) < 6) {
+        if (password.length < 6 || repassword.length < 6) {
+            console.log((password.length))
             setMessageAlert("Panjang password tidak sesuai")
             setShowAlert(true);
             return 
@@ -36,7 +38,8 @@ function ChangePasswordForm() {
 
         await sendRepass(password, repassword)
         if (!isErrorSendRepass) {
-            return redirect("/login")
+            console.log("fasfa")
+            return navigate("/login")
         }
 
         setMessageAlert("Kesalahan")
@@ -68,8 +71,13 @@ function ChangePasswordForm() {
             </div>
             <Form className="space-y-4 md:space-y-6" onSubmit={handleForgetPassword}>
                 {
-                    (isErrorSendRepass || showAlert) && (
+                    (showAlert) && (
                         <AlertComponent duration={5000} message={messageAlert} />
+                    )
+                }
+                {
+                    (isErrorSendRepass) && (
+                        <AlertComponent duration={5000} message={messageSendRepass} />
                     )
                 }
                 {/* {
@@ -87,13 +95,13 @@ function ChangePasswordForm() {
                     <span className="">@gmail.com</span>
                 </label> */}
                     <label className="input input-bordered flex items-center gap-2">
-                        <input name="password" type="password" placeholder="Password" className="grow" title="Password minimal 6 karakter" min={6} max={100} onInput={handlePasswordChange} />
+                        <input name="password" type="password" placeholder="Password" className="grow" title="Password minimal 6 karakter" min={6} max={100} onInput={handlePasswordChange} required/>
                     </label>
 
                 </div>
                 <div>
                     <label className="input input-bordered flex items-center gap-2">
-                        <input name="repassword" type="password" placeholder="Konfirmasi password" className="grow" title="Konfirmasi password sesuai dengan masukkan sebelumnya" min={6} max={100} onInput={handleRepasswordChange} />
+                        <input name="repassword" type="password" placeholder="Konfirmasi password" className="grow" title="Konfirmasi password sesuai dengan masukkan sebelumnya" min={6} max={100} onInput={handleRepasswordChange} required/>
                     </label>
                 </div>
                 {/* <div className="pb-2">
