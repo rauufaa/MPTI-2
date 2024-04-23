@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useAuthContext } from './useAuthContext'
+import { useSessionStorage } from './useSessionStorage';
 
 
 const fetchTimeOut = async (ms, promise) => {
@@ -30,18 +31,20 @@ function useLogout() {
     const logout = async () => {
         setIsErrorLogout(false);
         setIsLoadingLogout(true);
-        const user = sessionStorage.getItem("user");
+        const {getUserLogin} = useSessionStorage()
+        console.log(getUserLogin().token)
 
         try {
             const response = await fetchTimeOut(8000, fetch("http://localhost:3000/logout", {
                 method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: user
+                headers: { 'Content-Type': 'application/json' ,
+            'Authorization': getUserLogin().token},
+                body: JSON.stringify(getUserLogin())
             })).then(dat => dat.json())
 
             if (!response.ok) {
                 console.log(response)
-                setLoginMessages("Logout Invalid")
+                // setLoginMessages("Logout Invalid")
                 setIsLoadingLogout(false)
                 setIsErrorLogout(true)
                 return false
@@ -63,7 +66,10 @@ function useLogout() {
 
             return true;
         } catch (error) {
-            
+            // setLoginMessages(error.message)
+            setIsLoadingLogout(false)
+            setIsErrorLogout(true)
+            return false
         }
         
     }

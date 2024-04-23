@@ -1,6 +1,8 @@
 import { useState } from "react";
 import useSWR from "swr"
 import { useAuthContext } from "./useAuthContext";
+import { ACTION_TYPE } from "../context/AuthContext";
+import { useSessionStorage } from "./useSessionStorage";
 
 // import { handleLogin } from "../utils/handleUser.jsx";
 
@@ -34,6 +36,7 @@ function useLogin() {
     const [isLoading, setIsLoading] = useState(null)
     const [loginMessages, setLoginMessages] = useState(null)
     const { dispatch } = useAuthContext()
+    const { setUserLogin } = useSessionStorage()
 
     const login = async (username, password) => {
         setIsLoading(true)
@@ -77,12 +80,14 @@ function useLogin() {
             if (response.ok) {
                 // save the user to local storage
                 // localStorage.setItem('user', JSON.stringify(response.data))
-                sessionStorage.setItem("user", JSON.stringify(response.data))
-                console.log(localStorage.getItem("user"))
+                setUserLogin(response.data)
+                
+                // sessionStorage.setItem("user", JSON.stringify(response.data))
+                console.log(sessionStorage.getItem("user"))
                 
 
                 // update the auth context
-                dispatch({ type: 'LOGIN', payload: response.data })
+                dispatch({ type:ACTION_TYPE.LOGIN, payload: response.data })
 
                 // update loading state
                 setIsLoading(false)

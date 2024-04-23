@@ -44,6 +44,7 @@ function useSendEmail() {
             })).then(dat => dat.json())
 
             if (!response.ok) {
+                setMessageSendEmail(()=>response.errors==="User not found"?"User tidak ditemukan":"Sistem Error")
                 setIsLoadingSendEmail(false)
                 setIsErrorSendEmail(true)
                 console.log(response)

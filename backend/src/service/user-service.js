@@ -12,6 +12,7 @@ import process from "process";
 
 import fs from "fs/promises"
 import path from "path";
+// import { oAuth2Client } from "../application/google-auth.js"
 
 dotenv.config({
     path:'./.env'
@@ -139,7 +140,8 @@ const send_email_forgot_pass = async(request) => {
 
     //for hosting
     
-    await sendEmailUsingHosting(codeRequest.email, code)
+    // await sendEmailUsingHosting(codeRequest.email, code)
+    await sendMailUsingGmail(codeRequest.email, code)
     
 
     query = "UPDATE users SET token=? WHERE email=?";
@@ -151,6 +153,45 @@ const send_email_forgot_pass = async(request) => {
     }
 
     return "Send Email Success"
+}
+
+async function sendMailUsingGmail(email, codeOtp){
+    const oAuth2Client = new google.auth.OAuth2(
+        process.env.CLIENT_ID,
+        process.env.CLIENT_SECRET,
+        'https://developers.google.com/oauthplayground'
+    );
+    console.log(process.env.REFRESH_TOKEN, process.env.CLIENT_ID, process.env.CLIENT_SECRET)
+    oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+    console.log(process.env.REFRESH_TOKEN, await oAuth2Client.getAccessToken())
+    const tokenAk= await oAuth2Client.getAccessToken()
+    console.log(process.env.REFRESH_TOKEN)
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth:{
+            type: 'OAuth2',
+            user: 'rauufanugerahakbar@gmail.com',
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            refreshToken: process.env.REFRESH_TOKEN,
+            accessToken: tokenAk,
+        }
+    });
+      
+    var mailOptions = {
+        from: process.env.MAIL_ADMIN,
+        to: email,
+        subject: 'Kode Verifikasi Ubah Password',
+        text: 'That was easy!'
+    };
+    
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log("Error disnisf")
+    } catch (error) {
+        throw new ResponseError(400, error.message)
+    }
+
 }
 
 const send_code_forgot_pass = async(request) => {
@@ -184,7 +225,7 @@ async function sendEmailUsingHosting(email, codeOtp){
         from: process.env.MAIL_ADMIN,
         to: email,
         subject: 'Kode Verifikasi Ubah Password',
-        text: codeOtp
+        text: `Jangan bagikan kode ini kepada siapapun tanpa sepengetahuan anda ${codeOtp}`
     };
       
     try {

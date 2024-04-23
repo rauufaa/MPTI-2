@@ -1,9 +1,10 @@
-import { Link, Outlet } from "react-router-dom"
+import { Link, Outlet, redirect, useNavigate } from "react-router-dom"
 import Pertamina from "../../assets/Pertamina.svg"
 import PertaminaPNG from "../../assets/PertaminaPNG.png"
 import LoginForm from "./LoginForm"
 import elpiji from "../../assets/elpiji.png"
 import { useEffect } from "react"
+import { useSessionStorage } from "../../hooks/useSessionStorage"
 
 
 // export async function loginAction({ request }) {
@@ -14,14 +15,28 @@ import { useEffect } from "react"
 //     return 1;
 // }
 
+export const loaderLogin = ( ) => {
+    const {getUserLogin} = useSessionStorage()
+
+    if(getUserLogin()){
+        return redirect("/dashboard")
+    }
+    return null
+}
+
 function Login({title}) {
+    const {getUserLogin} = useSessionStorage()
+    const navigate = useNavigate()
     useEffect(()=>{
         document.title = title
+        if(getUserLogin()){
+            return navigate(-1, {replace:true})
+        }
     }, [])
     return (
 
-        <section className="bg-gray-50">
-            <div className="grid justify-items-center items-center px-6 py-8 mx-auto h-screen max-w-5xl lg:py-0 md:grid-cols-3">
+        <section className="bg-gray-50 min-h-screen">
+            <div className="grid justify-items-center items-center px-6 py-8 mx-auto min-h-screen max-w-5xl lg:py-0 md:grid-cols-3">
                 <Link to="/" className="flex flex-col items-center text-2xl text-gray-900 font-black">
                     <div className="grid grid-cols-2 items-center justify-items-center p-3">
                         <img src={PertaminaPNG} alt="logo" className="h-28" />

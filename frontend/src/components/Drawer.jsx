@@ -1,16 +1,19 @@
 import { Link, Outlet } from "react-router-dom"
 import PertaminaPNG from "../assets/PertaminaPNG.png"
 import elpiji from "../assets/elpiji.png"
+import Navbar from "./Navbar"
 
-function Drawer({drawerState}) {
+function Drawer({ drawerState }) {
     return (
-        <div className="">
-            <div className="drawer lg:drawer-open sm:z-50 lg:z-0">
+        <div className="flex justify-center">
+            <div className="drawer lg:drawer-open  lg:z-0 max-w-screen-2xl">
+                {/* <Navbar drawerState={drawerState} /> */}
                 <input id="navbar-drawer" type="checkbox" className="drawer-toggle" />
-                <div className="drawer-content flex flex-col items-center justify-center pt-24">
+                <div className="drawer-content flex flex-col ">
+
                     {/* Page content here */}
                     {/* <label htmlFor="navbar-drawer" className="btn btn-primary drawer-button lg:hidden">Open drawer</label> */}
-                    <Outlet/>
+                    {/* <Outlet /> */}
                 </div>
                 <div className="drawer-side">
                     <label htmlFor="navbar-drawer" aria-label="close sidebar" className="drawer-overlay" onClick={drawerState.handleDrawer}></label>
@@ -59,6 +62,7 @@ function Drawer({drawerState}) {
                 </div>
             </div>
         </div>
+
     )
 }
 

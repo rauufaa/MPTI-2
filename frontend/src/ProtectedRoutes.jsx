@@ -1,16 +1,40 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Route, redirect, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext"
+import { useEffect, useTransition } from "react";
+import { useSessionStorage } from "./hooks/useSessionStorage";
 
-function ProtectedRoutes({children}) {
-    const {user} = useAuthContext();
 
-    if(!user){
-        console.log("asfasf")
-        return(
-            <Navigate to="/login"/>
-        )
+
+function ProtectedRoutes({ children }) {
+    const { user, dispatch, statu } = useAuthContext();
+    const navigate = useNavigate();
+    console.log(user)
+    const {getUserLogin} = useSessionStorage()
+
+    // if(user===null){
+    //     return navigate("/login", {replace:true})
+    // }
+
+    useEffect(()=>{
+        // console.log(dispatch())
+        // if(user===null){
+        //     return navigate("/login", {replace:true})
+        // }
+        if(user===null){
+            console.log(user)
+            
+            return navigate("/login", {replace:true})
+        }
+        // user===null ? navigate("/login") : children
+        return ()=>{}
+    }, [user])
+
+    if(user===null){
+        return <div>Loading</div>
     }
+
     return (
+        
         children
     )
 }
