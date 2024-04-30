@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Navbar from '../../components/Navbar'
 import Drawer from '../../components/Drawer'
 import { useAuthContext } from '../../hooks/useAuthContext'
-import { redirect } from 'react-router-dom'
+import { redirect, useNavigate } from 'react-router-dom'
 import { useSessionStorage } from '../../hooks/useSessionStorage'
 import useLogout from '../../hooks/useLogout'
 import Toast from '../../components/Toast'
@@ -19,12 +19,18 @@ export const loaderDashboard = () => {
 
 function Dashboard({ title }) {
     const { isErrorLogout, isLoadingLogout } = useLogout();
+    const {user} = useAuthContext();
+    const navigate = useNavigate();
+    
     useEffect(() => {
         document.title = title
+        // if(!user){
+        //     return navigate("/login")
+        // }
     }, [])
 
     
-    console.log(isErrorLogout, isLoadingLogout)
+    // console.log(isErrorLogout, isLoadingLogout)
 
     const [drawerOpen, setDrawerOpen] = useState(false);
     const handleDrawer = () => {

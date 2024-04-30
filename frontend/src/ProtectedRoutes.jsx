@@ -33,10 +33,11 @@ function ProtectedRoutes({ children }) {
         return <div>Loading</div>
     }
 
-    return (
-        
-        children
-    )
+    console.log(user)
+
+    // return (
+    //     children
+    // )
 }
 
 export default ProtectedRoutes

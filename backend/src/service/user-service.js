@@ -159,8 +159,16 @@ async function sendMailUsingGmail(email, codeOtp){
     const oAuth2Client = new google.auth.OAuth2(
         process.env.CLIENT_ID,
         process.env.CLIENT_SECRET,
-        'https://developers.google.com/oauthplayground'
+        'https://www.googleapis.com/auth/gmail.send'
     );
+
+    const gmailg = google.gmail({
+        version:"v1",
+        auth: "AIzaSyBjOd460TG0y2xwPrpNbpjCOF0XFeQIuRs"
+    })
+
+    gmailg.users
+    
     console.log(process.env.REFRESH_TOKEN, process.env.CLIENT_ID, process.env.CLIENT_SECRET)
     oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
     console.log(process.env.REFRESH_TOKEN, await oAuth2Client.getAccessToken())
@@ -193,6 +201,8 @@ async function sendMailUsingGmail(email, codeOtp){
     }
 
 }
+
+
 
 const send_code_forgot_pass = async(request) => {
     const codeRequest = validate_object(codeOtpUserValidation, request)

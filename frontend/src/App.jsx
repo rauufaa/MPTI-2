@@ -21,7 +21,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    // loader: loaderLogin,
+    loader: loaderLogin,
     element: <Login title={"Login - Pangkalan Elpiji Egi Rahayu"} />,
     // children:[
     //   {

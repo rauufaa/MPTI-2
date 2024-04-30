@@ -5,6 +5,7 @@ import LoginForm from "./LoginForm"
 import elpiji from "../../assets/elpiji.png"
 import { useEffect } from "react"
 import { useSessionStorage } from "../../hooks/useSessionStorage"
+import { useAuthContext } from "../../hooks/useAuthContext"
 
 
 // export async function loginAction({ request }) {
@@ -27,17 +28,18 @@ export const loaderLogin = ( ) => {
 function Login({title}) {
     const {getUserLogin} = useSessionStorage()
     const navigate = useNavigate()
+    const {user} = useAuthContext()
     useEffect(()=>{
         document.title = title
-        if(getUserLogin()){
-            return navigate(-1, {replace:true})
-        }
+        // if(user){
+        //     return navigate(-1, {replace:true})
+        // }
     }, [])
     return (
 
-        <section className="bg-gray-50 min-h-screen">
+        <section className="bg-gray-50">
             <div className="grid justify-items-center items-center px-6 py-8 mx-auto min-h-screen max-w-5xl lg:py-0 md:grid-cols-3">
-                <Link to="/" className="flex flex-col items-center text-2xl text-gray-900 font-black">
+                <Link to="/" className="flex flex-col items-center text-2xl text-gray-900 font-black text-center p-3">
                     <div className="grid grid-cols-2 items-center justify-items-center p-3">
                         <img src={PertaminaPNG} alt="logo" className="h-28" />
                         <img src={elpiji} alt="" className="h-32 border-l-2" />

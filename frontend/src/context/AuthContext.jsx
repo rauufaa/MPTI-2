@@ -29,6 +29,12 @@ function AuthContextProvider({ children }) {
 
   const { getUserLogin } = useSessionStorage()
 
+  // const user = getUserLogin();
+  // if (user) {
+  //   dispatch({ type: ACTION_TYPE.LOGIN, payload: user })
+  //   setStatu(true)
+  // }
+
   useEffect(() => {
     const user = getUserLogin();
     if (user) {
@@ -36,8 +42,8 @@ function AuthContextProvider({ children }) {
       setStatu(true)
     }
     console.log(user)
-    
-    return ()=>{
+
+    return () => {
 
     }
   }, [])
@@ -51,7 +57,7 @@ function AuthContextProvider({ children }) {
 
   console.log('AuthContext state:', state)
   return (
-    <AuthContext.Provider value={{ ...state, dispatch, statu}}>
+    <AuthContext.Provider value={{ ...state, dispatch, statu }}>
       {children}
     </AuthContext.Provider>
   );
